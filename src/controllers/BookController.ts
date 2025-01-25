@@ -42,7 +42,7 @@ export class BookController {
             const response = {
                 id: book.id,
                 name: book.title,
-                score: book.averageRating
+                score: Number(book.averageRating)
             };
 
             res.json(response);
@@ -142,7 +142,7 @@ export class BookController {
                 .andWhere('borrowed_book.rating IS NOT NULL')
                 .getMany();
 
-            const totalRating = allRatings.reduce((sum, record) => sum + (record.rating || 0), 0);
+            const totalRating = allRatings.reduce((sum, record) => sum + Number(record.rating || 0), 0);
             book.averageRating = totalRating / allRatings.length;
 
             await bookRepository.save(book);
@@ -233,7 +233,7 @@ export class BookController {
                 .andWhere('borrowed_book.rating IS NOT NULL')
                 .getMany();
 
-            const totalRating = allRatings.reduce((sum, record) => sum + (record.rating || 0), 0);
+            const totalRating = allRatings.reduce((sum, record) => sum + Number(record.rating || 0), 0);
             book.averageRating = totalRating / allRatings.length;
 
             await bookRepository.save(book);

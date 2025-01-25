@@ -8,19 +8,21 @@ import routes from "./routes";
 dotenv.config();
 
 // Create Express app
-const app = express();
+export const app = express();
 
 // Middleware
 app.use(express.json());
 
-// Initialize TypeORM
-LibraryDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!");
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err);
-    });
+// Initialize TypeORM only if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+    LibraryDataSource.initialize()
+        .then(() => {
+            console.log("Data Source has been initialized!");
+        })
+        .catch((err) => {
+            console.error("Error during Data Source initialization:", err);
+        });
+}
 
 // Routes - removing the /api prefix to match Postman collection
 app.use('/', routes);
@@ -31,8 +33,10 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-}); 
+// Start server only if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+} 

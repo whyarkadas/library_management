@@ -37,7 +37,7 @@ export class UserController {
                 .filter(bb => bb.returnedAt !== null)
                 .map(bb => ({
                     name: bb.book.title,
-                    userScore: bb.rating
+                    userScore: bb.rating ? Number(bb.rating) : null
                 }));
 
             const presentBooks = user.borrowedBooks

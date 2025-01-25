@@ -19,6 +19,9 @@ export class BorrowedBook {
     @Column({ type: 'timestamp', nullable: true })
     returnedAt!: Date | null;
 
-    @Column({ type: "decimal", precision: 3, scale: 1, nullable: true })
+    @Column({ type: 'decimal', precision: 3, scale: 1, nullable: true, transformer: {
+        to: (value: number) => value,
+        from: (value: string) => value ? Number(value) : null
+    } })
     rating!: number | null;
 } 
