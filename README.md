@@ -96,8 +96,6 @@ npm run seed
 - `GET /books` - List all books
 - `GET /books/:id` - Get book details
 - `POST /books` - Create a new book
-- `POST /books/:id/borrow` - Borrow a book
-- `POST /books/:id/return` - Return a book
 
 ## Request/Response Examples
 
@@ -123,17 +121,13 @@ Content-Type: application/json
 
 ### Borrow Book
 ```http
-POST /books/1/borrow
+POST /users/1/borrow/1
 Content-Type: application/json
-
-{
-    "userId": 1
-}
 ```
 
 ### Return Book
 ```http
-POST /books/1/return
+POST /users/1/return/1
 Content-Type: application/json
 
 {
