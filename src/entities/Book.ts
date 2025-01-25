@@ -9,7 +9,7 @@ export class Book {
     @Column()
     title!: string;
 
-    @Column("decimal", { precision: 3, scale: 2, default: 0 })
+    @Column("decimal", { precision: 4, scale: 2, default: 0 })
     averageRating!: number;
 
     @Column({ default: true })

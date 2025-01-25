@@ -22,8 +22,8 @@ AppDataSource.initialize()
         console.error("Error during Data Source initialization:", err);
     });
 
-// Routes
-app.use('/api', routes);
+// Routes - removing the /api prefix to match Postman collection
+app.use('/', routes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
