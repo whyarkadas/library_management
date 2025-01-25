@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { AppDataSource } from '../config/database';
+import { LibraryDataSource } from '../config/database';
 import { User } from '../entities/User';
 import { BorrowedBook } from '../entities/BorrowedBook';
 import { IsNull, Not } from 'typeorm';
 
-const userRepository = AppDataSource.getRepository(User);
-const borrowedBookRepository = AppDataSource.getRepository(BorrowedBook);
+const userRepository = LibraryDataSource.getRepository(User);
+const borrowedBookRepository = LibraryDataSource.getRepository(BorrowedBook);
 
 export class UserController {
     static async listUsers(req: Request, res: Response): Promise<void> {

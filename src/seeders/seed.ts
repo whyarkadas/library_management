@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/database";
+import { LibraryDataSource } from "../config/database";
 import { User } from "../entities/User";
 import { Book } from "../entities/Book";
 import { BorrowedBook } from "../entities/BorrowedBook";
@@ -6,13 +6,13 @@ import { BorrowedBook } from "../entities/BorrowedBook";
 async function seed() {
     try {
         // Initialize the database connection
-        await AppDataSource.initialize();
+        await LibraryDataSource.initialize();
 
         // Drop and recreate tables
-        await AppDataSource.synchronize(true);
+        await LibraryDataSource.synchronize(true);
 
         // Create users
-        const users = await AppDataSource.getRepository(User).save([
+        const users = await LibraryDataSource.getRepository(User).save([
             { name: "Enes Faruk Meniz" },
             { name: "Eray Aslan" },
             { name: "Sefa Eren Şahin" },
@@ -20,7 +20,7 @@ async function seed() {
         ]);
 
         // Create books
-        const books = await AppDataSource.getRepository(Book).save([
+        const books = await LibraryDataSource.getRepository(Book).save([
             { title: "The Hitchhiker's Guide to the Galaxy", averageRating: 10, isAvailable: true },
             { title: "I, Robot", averageRating: 5, isAvailable: true },
             { title: "Dune", averageRating: 0, isAvailable: true },
@@ -29,7 +29,7 @@ async function seed() {
         ]);
 
         // Create borrowed books records
-        const borrowedBooks = await AppDataSource.getRepository(BorrowedBook).save([
+        const borrowedBooks = await LibraryDataSource.getRepository(BorrowedBook).save([
             {
                 user: users[0], // Enes Faruk Meniz
                 book: books[0], // Hitchhiker's Guide
@@ -53,11 +53,11 @@ async function seed() {
             }
         ]);
 
-        console.log("Seed completed successfully!");
-        process.exit(0);
+        console.log("Seeding completed successfully!");
     } catch (error) {
         console.error("Error during seeding:", error);
-        process.exit(1);
+    } finally {
+        await LibraryDataSource.destroy();
     }
 }
 

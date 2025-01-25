@@ -1,5 +1,5 @@
 import express from "express";
-import { AppDataSource } from "./config/database";
+import { LibraryDataSource } from "./config/database";
 import dotenv from "dotenv";
 import "reflect-metadata";
 import routes from "./routes";
@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 
 // Initialize TypeORM
-AppDataSource.initialize()
+LibraryDataSource.initialize()
     .then(() => {
         console.log("Data Source has been initialized!");
     })
