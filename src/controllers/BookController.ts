@@ -152,4 +152,95 @@ export class BookController {
             res.status(500).json({ error: 'Error returning book' });
         }
     }
+
+    // Add new method for user-centric book borrowing
+    static async borrowBookByUser(req: Request, res: Response): Promise<void> {
+        try {
+            const userId = parseInt(req.params.userId);
+            const bookId = parseInt(req.params.bookId);
+
+            const book = await bookRepository.findOne({
+                where: { id: bookId }
+            });
+
+            if (!book) {
+                res.status(404).json({ error: 'Book not found' });
+                return;
+            }
+
+            if (!book.isAvailable) {
+                res.status(400).json({ error: 'Book is not available' });
+                return;
+            }
+
+            const user = await userRepository.findOne({
+                where: { id: userId }
+            });
+
+            if (!user) {
+                res.status(404).json({ error: 'User not found' });
+                return;
+            }
+
+            const borrowedBook = borrowedBookRepository.create({
+                user,
+                book,
+                borrowedAt: new Date()
+            });
+
+            book.isAvailable = false;
+            await bookRepository.save(book);
+            await borrowedBookRepository.save(borrowedBook);
+
+            res.status(200).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Error borrowing book' });
+        }
+    }
+
+    // Add new method for user-centric book returning
+    static async returnBookByUser(req: Request, res: Response): Promise<void> {
+        try {
+            const { score } = req.body;
+            const userId = parseInt(req.params.userId);
+            const bookId = parseInt(req.params.bookId);
+
+            const borrowedBook = await borrowedBookRepository.findOne({
+                where: { 
+                    user: { id: userId },
+                    book: { id: bookId },
+                    returnedAt: IsNull()
+                },
+                relations: ['book']
+            });
+
+            if (!borrowedBook) {
+                res.status(404).json({ error: 'Borrowed book record not found' });
+                return;
+            }
+
+            borrowedBook.returnedAt = new Date();
+            borrowedBook.rating = score;
+            await borrowedBookRepository.save(borrowedBook);
+
+            const book = borrowedBook.book;
+            book.isAvailable = true;
+
+            // Update average rating
+            const allRatings = await borrowedBookRepository
+                .createQueryBuilder('borrowed_book')
+                .where('borrowed_book.book.id = :bookId', { bookId })
+                .andWhere('borrowed_book.rating IS NOT NULL')
+                .getMany();
+
+            const totalRating = allRatings.reduce((sum, record) => sum + (record.rating || 0), 0);
+            book.averageRating = totalRating / allRatings.length;
+
+            await bookRepository.save(book);
+
+            res.status(200).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Error returning book' });
+        }
+    }
 } 

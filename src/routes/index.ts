@@ -23,4 +23,10 @@ router.post('/books', bookValidation, validate as RequestHandler, BookController
 router.post('/books/:id/borrow', borrowBookValidation, validate as RequestHandler, BookController.borrowBook as RequestHandler);
 router.post('/books/:id/return', returnBookValidation, validate as RequestHandler, BookController.returnBook as RequestHandler);
 
+// Add new user-centric borrow route
+router.post('/users/:userId/borrow/:bookId', BookController.borrowBookByUser as RequestHandler);
+
+// Add new user-centric return route
+router.post('/users/:userId/return/:bookId', returnBookValidation, validate as RequestHandler, BookController.returnBookByUser as RequestHandler);
+
 export default router; 
